@@ -148,8 +148,8 @@ async function secureApiCall(endpoint, body) {
 document.getElementById('meal-plan-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const canProceed = await checkUserStatus();
-    if (!canProceed) return;
+    // const canProceed = await checkUserStatus();
+    // if (!canProceed) return;
     
     formContainer.style.display = 'none';
     loader.style.display = 'flex';
@@ -189,12 +189,12 @@ document.getElementById('meal-plan-form').addEventListener('submit', async (e) =
             mealPlanImage.src = `data:image/png;base64,${imageResult.predictions[0].bytesBase64Encoded}`;
         }
 
-        const userDocRef = db.doc(db, "users", currentUser.uid);
-        const userDoc = await db.getDoc(userDocRef);
-        if (userDoc.exists()) {
-            const newCount = (userDoc.data().usageCount || 0) + 1;
-            await db.setDoc(userDocRef, { usageCount: newCount }, { merge: true });
-        }
+        // const userDocRef = db.doc(db, "users", currentUser.uid);
+        // const userDoc = await db.getDoc(userDocRef);
+        // if (userDoc.exists()) {
+        //     const newCount = (userDoc.data().usageCount || 0) + 1;
+        //     await db.setDoc(userDocRef, { usageCount: newCount }, { merge: true });
+        // }
         
         loader.style.display = 'none';
         resultContainer.style.display = 'block';
