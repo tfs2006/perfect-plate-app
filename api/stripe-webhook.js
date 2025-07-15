@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 // You would set up your database client here (e.g., Firebase Admin SDK)
 // import { adminDb } from './_db-admin-client'; 
 
-const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     event = stripe.webhooks.constructEvent(
       req.body, 
       sig, 
-      process.env.VITE_STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);

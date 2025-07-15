@@ -7,7 +7,7 @@ lucide.createIcons();
 const { jsPDF } = window.jspdf;
 
 // --- FIREBASE SETUP ---
-// This is your actual Firebase configuration.
+// This is your actual Firebase configuration from your screenshot.
 const firebaseConfig = {
   apiKey: "AIzaSyCJWulSyGxtR0zYR2SuSzwdG1vitXVc",
   authDomain: "auto-blog-275601.firebaseapp.com",
@@ -31,9 +31,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 */
 
-// --- SIMULATED FIREBASE & AUTH (for local testing) ---
-// This section simulates Firebase functionality. For your live site on Netlify,
-// you would delete this simulation block and use the real Firebase code above.
+// --- SIMULATED FIREBASE & AUTH (for local testing in VS Code) ---
+// This section simulates Firebase so you can test without deploying.
+// For your live site, you would delete this simulation block and use the real code above.
 const FAKE_DB = { users: {} };
 const auth = {
     currentUser: null,
@@ -60,14 +60,20 @@ const auth = {
 const db = {
     getDoc: async (docRef) => {
         const userId = docRef.id;
-        const userEmail = Object.keys(FAKE_DB.users).find(email => FAKE_DB.users[email].uid === userId || email === userId);
+        const userEmail = Object.keys(FAKE_DB.users).find(email => FAKE_DB.users[email] && FAKE_DB.users[email].uid === userId) || Object.keys(FAKE_DB.users).find(email => email === userId);
         const data = FAKE_DB.users[userEmail];
         return { exists: () => !!data, data: () => data };
     },
-    setDoc: async (docRef, data) => {
+    setDoc: async (docRef, data, options) => {
         const userId = docRef.id;
-        const userEmail = data.email;
-        FAKE_DB.users[userEmail] = { ...FAKE_DB.users[userEmail], ...data, uid: userId };
+        const userEmail = data.email || (auth.currentUser ? auth.currentUser.email : null);
+        if (userEmail) {
+           if (!FAKE_DB.users[userEmail] || !options || !options.merge) {
+             FAKE_DB.users[userEmail] = { uid: userId, ...data };
+           } else {
+             FAKE_DB.users[userEmail] = { ...FAKE_DB.users[userEmail], ...data, uid: userId };
+           }
+        }
     },
     doc: (dbInstance, collection, id) => ({ id })
 };
@@ -89,7 +95,50 @@ const paywallModal = document.createElement('div');
 
 // --- AUTHENTICATION & PAYWALL ---
 function showAuthModal() {
-    // ... (This function remains the same)
+    const authModal = document.createElement('div');
+    authModal.id = 'auth-modal';
+    authModal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50';
+    authModal.innerHTML = `
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+            <h2 class="text-2xl font-bold text-gray-800">Sign Up or Log In</h2>
+            <p class="mt-2 text-gray-600">Create an account or log in to continue.</p>
+            <form id="auth-form" class="mt-6 text-left">
+                <input type="email" id="auth-email" placeholder="Email" required class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg">
+                <input type="password" id="auth-password" placeholder="Password" required class="mt-4 w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg">
+                <div class="mt-6 flex gap-4">
+                    <button type="submit" name="signup" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700">Sign Up</button>
+                    <button type="submit" name="login" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300">Log In</button>
+                </div>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(authModal);
+
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-password').value;
+        const action = e.submitter.name;
+
+        try {
+            if (action === 'signup') {
+                const userCredential = await auth.createUserWithEmailAndPassword(auth, email, password);
+                await db.setDoc(db.doc(db, "users", userCredential.user.uid), {
+                    email: userCredential.user.email,
+                    isSubscribed: false,
+                    usageCount: 0
+                });
+                showMessage("Account created successfully!");
+            } else {
+                await auth.signInWithEmailAndPassword(auth, email, password);
+                showMessage("Logged in successfully!");
+            }
+            document.body.removeChild(authModal);
+            checkUserStatus();
+        } catch (error) {
+            showMessage(error.message);
+        }
+    });
 }
 
 async function checkUserStatus() {
@@ -110,12 +159,7 @@ async function checkUserStatus() {
             return false;
         }
     } else {
-        // First time user after signup, create their doc
-         await db.setDoc(db.doc(db, "users", currentUser.uid), {
-            email: currentUser.email,
-            isSubscribed: false,
-            usageCount: 0
-        });
+        await db.setDoc(userDocRef, { email: currentUser.email, isSubscribed: false, usageCount: 0 });
         return true;
     }
 }
@@ -126,11 +170,15 @@ function showPaywall() {
 
 // --- SECURE API CALLS (to your serverless functions) ---
 async function secureApiCall(endpoint, body) {
-    const functionUrl = `/.netlify/functions/${endpoint}`; // Netlify's path for functions
+    // This is the correct, robust path for Netlify functions
+    const functionUrl = `/.netlify/functions/${endpoint}`;
+    
     const response = await fetch(functionUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        // The body of our request to the serverless function
+        // now contains the original body intended for the Google API.
+        body: JSON.stringify(body) 
     });
     if (!response.ok) {
         const errorData = await response.json();
@@ -160,23 +208,44 @@ document.getElementById('meal-plan-form').addEventListener('submit', async (e) =
     const prompt = `Create a 7-day meal plan for a ${age}-year-old ${gender} of ${ethnicity} ethnicity...`; // Full prompt here
 
     try {
+        // Call the 'generate-plan' serverless function for the meal plan
         const textResult = await secureApiCall('generate-plan', { 
             endpoint: 'gemini-2.0-flash:generateContent',
             body: { contents: [{ parts: [{ text: prompt }] }] }
         });
         
-        // ... (rest of the try block)
+        if (textResult.candidates && textResult.candidates.length > 0) {
+            currentMealPlanText = textResult.candidates[0].content.parts[0].text;
+            displayResults(currentMealPlanText);
+        } else {
+            throw new Error("Failed to generate a meal plan.");
+        }
 
-        // After successful generation:
+        const imagePrompt = `A vibrant, appetizing, and professionally shot flat lay photograph...`; // Full prompt here
+        // Call the 'generate-plan' serverless function for the image
+        const imageResult = await secureApiCall('generate-plan', {
+            endpoint: 'imagen-3.0-generate-002:predict',
+            body: { instances: [{ prompt: imagePrompt }], parameters: { "sampleCount": 1} }
+        });
+
+        if (imageResult.predictions && imageResult.predictions.length > 0) {
+            mealPlanImage.src = `data:image/png;base64,${imageResult.predictions[0].bytesBase64Encoded}`;
+        }
+
         const userDocRef = db.doc(db, "users", currentUser.uid);
         const userDoc = await db.getDoc(userDocRef);
         if (userDoc.exists()) {
             const newCount = (userDoc.data().usageCount || 0) + 1;
             await db.setDoc(userDocRef, { usageCount: newCount }, { merge: true });
         }
+        
+        loader.style.display = 'none';
+        resultContainer.style.display = 'block';
 
     } catch (error) {
-        // ... (error handling)
+        loader.style.display = 'none';
+        formContainer.style.display = 'block';
+        showMessage(error.message || "An unknown error occurred.");
     }
 });
 
@@ -186,7 +255,6 @@ auth.onAuthStateChanged((user) => {
     currentUser = user;
     if (user) {
         console.log("User is logged in:", user.email);
-        // You could potentially hide a "login" button and show a "logout" button here.
     } else {
         console.log("No user is logged in.");
     }
@@ -196,4 +264,3 @@ auth.onAuthStateChanged((user) => {
 // [The rest of your existing, working JavaScript code would go here]
 // This includes: nextStep, prevStep, updateStepIndicator, groceryListButton listener,
 // refineButton listener, displayResults, parseMarkdownForPdf, pdfButton listener, showMessage.
-// For brevity, these functions are omitted as they do not need changes.
