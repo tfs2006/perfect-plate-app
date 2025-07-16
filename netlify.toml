@@ -1,10 +1,17 @@
-# Netlify configuration file to adjust security headers
+# Netlify configuration file for Perfect-Plate
 
+# This section defines the build settings.
+[build]
+  # This tells Netlify where your serverless functions are located.
+  functions = "api/"
+  # This tells Netlify where your main website files are.
+  publish = "."
+
+# This section adjusts the security headers to fix the PDF error.
 [[headers]]
-  # Apply these headers to all pages on the site
+  # Apply these headers to all pages on the site.
   for = "/*"
   [headers.values]
-    # This is the Content Security Policy header.
-    # We are adding 'unsafe-eval' to the script-src directive.
-    # This tells the browser to allow the functions needed by the PDF library.
+    # This is the Content Security Policy (CSP) header.
+    # We are adding 'unsafe-eval' to allow the PDF library to work correctly.
     Content-Security-Policy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com;"
