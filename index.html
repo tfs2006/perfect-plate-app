@@ -1,692 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect-Plate - AI Meal Planner</title>
+    <title>Wellness Verified - Your Guide to Health & Supplements</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7fafc;
-        }
-        .main-grid {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            height: 100vh;
-        }
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            #sidebar {
-                display: none;
-            }
-        }
-        .form-step {
-            display: none;
-        }
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .step-indicator {
-            transition: all 0.4s ease;
-            transform-origin: left;
-        }
-        .checkbox-card {
-            transition: all 0.2s ease;
-        }
-        .checkbox-card input:checked + label {
-            border-color: #059669; /* Emerald-600 */
-            background-color: #ecfdf5; /* Emerald-50 */
-            color: #047857; /* Emerald-700 */
-        }
-        .loader-container {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(240, 242, 245, 0.8);
-            backdrop-filter: blur(4px);
-            z-index: 50;
-        }
-        .result-tab.active {
-            color: #059669;
-            border-color: #059669;
-        }
-        .btn-primary {
-            background: linear-gradient(to right, #10b981, #34d399);
-        }
-        .btn-secondary {
-             background: linear-gradient(to right, #6366f1, #818cf8);
-        }
-    </style>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="bg-gray-100">
+<body class="text-slate-800">
 
-    <div class="main-grid">
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="bg-gray-800 text-white p-8 flex flex-col justify-between shadow-2xl">
-            <div>
-                <h1 class="text-2xl font-bold flex items-center gap-3">
-                    <i data-lucide="sparkles" class="text-emerald-400"></i>
-                    Perfect-Plate
-                </h1>
-                <p class="text-sm text-gray-400 mt-2">Intelligent nutrition, simplified.</p>
-                
-                <div id="step-indicators" class="mt-16 space-y-8">
-                    <div id="step-1-indicator" class="step-indicator flex items-center gap-4 opacity-100">
-                        <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center font-bold text-white shadow-lg">1</div>
-                        <div>
-                            <p class="font-bold">Your Profile</p>
-                            <p class="text-sm text-gray-400">Personal details.</p>
-                        </div>
+    <!-- HEADER & NAVIGATION -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <nav class="container mx-auto px-4 lg:px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="flex items-center space-x-2 router-link">
+                    <div class="bg-indigo-600 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <div id="step-2-indicator" class="step-indicator flex items-center gap-4 opacity-50">
-                        <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-gray-400">2</div>
-                        <div>
-                            <p class="font-bold">Health Goals</p>
-                            <p class="text-sm text-gray-400">Diet & objectives.</p>
-                        </div>
-                    </div>
-                    <div id="step-3-indicator" class="step-indicator flex items-center gap-4 opacity-50">
-                        <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold text-gray-400">3</div>
-                        <div>
-                            <p class="font-bold">Food Preferences</p>
-                            <p class="text-sm text-gray-400">Likes & dislikes.</p>
-                        </div>
-                    </div>
+                    <span class="text-xl font-bold text-slate-900">Wellness Verified</span>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#home" class="text-slate-600 hover:text-indigo-600 transition-colors router-link nav-link-active">Home</a>
+                    <a href="#pillar" class="text-slate-600 hover:text-indigo-600 transition-colors router-link">Metabolic Health</a>
+                    <a href="#about" class="text-slate-600 hover:text-indigo-600 transition-colors router-link">About Us</a>
+                    <a href="#review-process" class="text-slate-600 hover:text-indigo-600 transition-colors router-link">Our Review Process</a>
+                    <a href="#contact" class="text-slate-600 hover:text-indigo-600 transition-colors router-link">Contact</a>
+                </div>
+                <div class="lg:hidden">
+                    <button id="mobile-menu-button" class="text-slate-600 hover:text-indigo-600">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
                 </div>
             </div>
-            <div class="text-center text-xs text-gray-500">
-                <p>&copy; 2024 Perfect-Plate</p>
-            </div>
-        </aside>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden px-4 pt-2 pb-4 space-y-2">
+            <a href="#home" class="block text-slate-600 hover:bg-slate-100 rounded-md p-2 router-link">Home</a>
+            <a href="#pillar" class="block text-slate-600 hover:bg-slate-100 rounded-md p-2 router-link">Metabolic Health</a>
+            <a href="#about" class="block text-slate-600 hover:bg-slate-100 rounded-md p-2 router-link">About Us</a>
+            <a href="#review-process" class="block text-slate-600 hover:bg-slate-100 rounded-md p-2 router-link">Our Review Process</a>
+            <a href="#contact" class="block text-slate-600 hover:bg-slate-100 rounded-md p-2 router-link">Contact</a>
+        </div>
+    </header>
 
-        <!-- MAIN CONTENT -->
-        <main class="w-full h-screen overflow-y-auto p-6 sm:p-8 lg:p-12 relative bg-slate-50">
-            
-            <!-- LOADER -->
-            <div id="loader" class="loader-container hidden items-center justify-center flex-col gap-4">
-                <svg class="animate-spin h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <p id="loader-text" class="text-lg font-semibold text-gray-700">Crafting your perfect meal plan...</p>
-            </div>
+    <!-- MAIN CONTENT AREA (Dynamically Loaded) -->
+    <main id="main-content" class="container mx-auto px-4 lg:px-6 py-8 md:py-12">
+        <!-- Content will be loaded here by main.js -->
+    </main>
 
-            <!-- FORM CONTAINER -->
-            <div id="form-container">
-                <form id="meal-plan-form">
-                    <!-- Step 1: Profile -->
-                    <div id="step-1" class="form-step active">
-                        <h2 class="text-4xl font-bold text-gray-800">Tell us about yourself</h2>
-                        <p class="text-gray-500 mt-2">This helps us create a plan that's right for you.</p>
-                        <div class="mt-8 space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="age" class="font-medium text-gray-700">Age</label>
-                                    <input type="number" id="age" name="age" required class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
-                                </div>
-                                <div>
-                                    <label for="gender" class="font-medium text-gray-700">Gender</label>
-                                    <select id="gender" name="gender" required class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
-                                        <option value="" disabled selected>Select...</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label for="ethnicity" class="font-medium text-gray-700">Ethnicity / Cultural Background</label>
-                                <input type="text" id="ethnicity" name="ethnicity" required class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" placeholder="e.g., Mediterranean, East Asian">
-                            </div>
-                        </div>
-                        <div class="mt-10 flex justify-end">
-                            <button type="button" onclick="nextStep(2)" class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg hover:opacity-90 transition duration-300 shadow-lg">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Goals -->
-                    <div id="step-2" class="form-step">
-                        <h2 class="text-4xl font-bold text-gray-800">What are your goals?</h2>
-                        <p class="text-gray-500 mt-2">Let's tailor the plan to your health objectives.</p>
-                        <div class="mt-8 space-y-6">
-                             <div>
-                                <label for="fitness-goal" class="font-medium text-gray-700">Primary Fitness Goal</label>
-                                <select id="fitness-goal" name="fitness-goal" class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
-                                    <option value="Weight Loss">Weight Loss</option>
-                                    <option value="Maintain Weight">Maintain Weight</option>
-                                    <option value="Muscle Gain">Muscle Gain</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="font-medium text-gray-700">Any specific dietary patterns?</label>
-                                <div class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Vegetarian" id="veg" class="hidden"><label for="veg" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Vegetarian</label></div>
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Vegan" id="vegan" class="hidden"><label for="vegan" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Vegan</label></div>
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Keto" id="keto" class="hidden"><label for="keto" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Keto</label></div>
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Paleo" id="paleo" class="hidden"><label for="paleo" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Paleo</label></div>
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Gluten-Free" id="gluten" class="hidden"><label for="gluten" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Gluten-Free</label></div>
-                                    <div class="checkbox-card"><input type="checkbox" name="diet" value="Dairy-Free" id="dairy" class="hidden"><label for="dairy" class="block border-2 border-gray-200 rounded-lg p-4 text-center cursor-pointer font-semibold hover:border-emerald-400">Dairy-Free</label></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-10 flex justify-between">
-                            <button type="button" onclick="prevStep(1)" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300 transition duration-300">Back</button>
-                            <button type="button" onclick="nextStep(3)" class="btn-secondary text-white font-semibold py-3 px-8 rounded-lg hover:opacity-90 transition duration-300 shadow-lg">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Foods -->
-                    <div id="step-3" class="form-step">
-                        <h2 class="text-4xl font-bold text-gray-800">Medical & Food Preferences</h2>
-                        <p class="text-gray-500 mt-2">Help us avoid things you don't want.</p>
-                        <div class="mt-8 space-y-6">
-                            <div>
-                                <label for="medical-conditions" class="font-medium text-gray-700">Known Medical Conditions</label>
-                                <textarea id="medical-conditions" name="medical-conditions" rows="3" class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" placeholder="e.g., Diabetes, High Blood Pressure. If none, write 'None'."></textarea>
-                            </div>
-                             <div>
-                                <label for="exclusions" class="font-medium text-gray-700">Foods to Exclude</label>
-                                <textarea id="exclusions" name="exclusions" rows="3" class="mt-2 w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" placeholder="e.g., Cilantro, Mushrooms, Shellfish. If none, leave blank."></textarea>
-                            </div>
-                        </div>
-                        <div class="mt-10 flex justify-between">
-                            <button type="button" onclick="prevStep(2)" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300 transition duration-300">Back</button>
-                            <button type="submit" class="btn-primary text-white font-bold py-3 px-8 rounded-lg hover:opacity-90 transition duration-300 shadow-lg flex items-center gap-2">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                                Create My Plan
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- RESULT CONTAINER -->
-            <div id="result-container" class="hidden">
-                 <div class="flex justify-between items-start">
-                    <div>
-                        <h2 class="text-4xl font-bold text-gray-800">Your Personalized Plan</h2>
-                        <p class="text-gray-500 mt-1">Here is the 7-day meal plan and grocery list crafted just for you.</p>
-                    </div>
-                    <div>
-                         <button id="refine-button" class="bg-white text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition duration-300 flex items-center gap-2 border border-gray-300 shadow-sm">
-                            <i data-lucide="edit" class="w-4 h-4"></i>
-                            Start Over
-                        </button>
-                    </div>
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-300">
+        <div class="container mx-auto px-4 lg:px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="font-bold text-white text-lg mb-4">Wellness Verified</h3>
+                    <p class="text-sm text-slate-400">Our mission is to cut through the hype and provide evidence-based, trustworthy reviews of health and wellness products.</p>
                 </div>
-
-                <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Left Column -->
-                    <div class="lg:col-span-1 space-y-8">
-                        <div id="image-container" class="w-full rounded-2xl overflow-hidden shadow-xl">
-                            <img id="meal-plan-image" src="" alt="Meal Plan Image" class="w-full h-auto object-cover">
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-lg">
-                            <h3 class="text-xl font-bold text-gray-800">Grocery List</h3>
-                             <div id="grocery-list-container" class="mt-4 space-y-4 max-h-96 overflow-y-auto pr-2">
-                                <!-- JS will populate this -->
-                            </div>
-                            <button id="grocery-list-button" class="mt-4 w-full bg-emerald-50 text-emerald-800 font-semibold py-3 px-4 rounded-lg hover:bg-emerald-100 focus:outline-none transition duration-300 flex items-center justify-center gap-2 border border-emerald-200">
-                                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                                <span>Generate Grocery List</span>
-                            </button>
-                        </div>
-                         <button id="pdf-button" class="w-full bg-rose-500 text-white font-semibold py-3 px-4 rounded-lg hover:bg-rose-600 focus:outline-none transition duration-300 flex items-center justify-center gap-2 shadow-lg">
-                            <i data-lucide="file-down" class="w-5 h-5"></i>
-                            <span>Download as PDF</span>
-                        </button>
-                    </div>
-                    <!-- Right Column -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                        <div class="border-b border-gray-200">
-                            <nav id="result-tabs" class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
-                                <!-- JS will populate tabs -->
-                            </nav>
-                        </div>
-                        <div id="tab-content" class="mt-6">
-                            <!-- JS will populate content -->
-                        </div>
-                    </div>
+                <div>
+                    <h3 class="font-bold text-white text-lg mb-4">Navigation</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-white transition-colors text-sm router-link">Home</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors text-sm router-link">About Us</a></li>
+                        <li><a href="#review-process" class="hover:text-white transition-colors text-sm router-link">Our Review Process</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors text-sm router-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-lg mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#disclosure" class="hover:text-white transition-colors text-sm router-link">Affiliate Disclosure</a></li>
+                        <li><a href="#privacy" class="hover:text-white transition-colors text-sm router-link">Privacy Policy</a></li>
+                        <li><a href="#terms" class="hover:text-white transition-colors text-sm router-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-lg mb-4">Disclaimer</h3>
+                    <p class="text-xs text-slate-400">The information on this website is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
                 </div>
             </div>
-            
-            <!-- Custom Message Box -->
-            <div id="message-box" class="hidden fixed bottom-5 right-5 bg-gray-900 text-white p-4 rounded-lg shadow-lg max-w-sm z-50">
-                <p id="message-text" class="font-medium"></p>
+            <div class="mt-8 pt-8 border-t border-slate-700 text-center text-xs text-slate-500">
+                <p>&copy; 2025 Wellness Verified. All Rights Reserved.</p>
             </div>
-        </main>
-    </div>
+        </div>
+    </footer>
 
-    <script>
-        lucide.createIcons();
-        const { jsPDF } = window.jspdf;
-
-        // --- STATE & DOM ELEMENTS ---
-        let currentStep = 1;
-        let currentMealPlanText = "";
-        let groceryListData = null;
-        const apiKey = ""; // Handled by environment
-
-        const formContainer = document.getElementById('form-container');
-        const resultContainer = document.getElementById('result-container');
-        const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loader-text');
-
-        const mealPlanImage = document.getElementById('meal-plan-image');
-        const groceryListContainer = document.getElementById('grocery-list-container');
-        const groceryListButton = document.getElementById('grocery-list-button');
-        const refineButton = document.getElementById('refine-button');
-        const pdfButton = document.getElementById('pdf-button');
-        
-        const messageBox = document.getElementById('message-box');
-        const messageText = document.getElementById('message-text');
-
-        // --- FORM NAVIGATION ---
-        function nextStep(step) {
-            if (step === 2) {
-                if (!document.getElementById('age').value || !document.getElementById('gender').value) {
-                    showMessage("Please fill in your age and gender.");
-                    return;
-                }
-            }
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById(`step-${step}`).classList.add('active');
-            updateStepIndicator(step);
-            currentStep = step;
-        }
-
-        function prevStep(step) {
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById(`step-${step}`).classList.add('active');
-            updateStepIndicator(step);
-            currentStep = step;
-        }
-
-        function updateStepIndicator(step) {
-            for (let i = 1; i <= 3; i++) {
-                const indicator = document.getElementById(`step-${i}-indicator`);
-                const circle = indicator.querySelector('div:first-child');
-                if (i === step) {
-                    indicator.classList.remove('opacity-50');
-                    indicator.classList.add('opacity-100');
-                    circle.classList.remove('bg-gray-700', 'text-gray-400');
-                    circle.classList.add('bg-emerald-500', 'text-white');
-                } else {
-                    indicator.classList.remove('opacity-100');
-                    indicator.classList.add('opacity-50');
-                    circle.classList.remove('bg-emerald-500', 'text-white');
-                    circle.classList.add('bg-gray-700', 'text-gray-400');
-                }
-            }
-        }
-
-        // --- CORE LOGIC ---
-        document.getElementById('meal-plan-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            formContainer.style.display = 'none';
-            loader.style.display = 'flex';
-
-            const age = document.getElementById('age').value;
-            const gender = document.getElementById('gender').value;
-            const ethnicity = document.getElementById('ethnicity').value;
-            const medicalConditions = document.getElementById('medical-conditions').value;
-            const fitnessGoal = document.getElementById('fitness-goal').value;
-            const exclusions = document.getElementById('exclusions').value;
-            const dietaryPrefs = Array.from(document.querySelectorAll('input[name="diet"]:checked')).map(el => el.value);
-
-            let prompt = `Create a 7-day meal plan for a ${age}-year-old ${gender} of ${ethnicity} ethnicity. Their primary fitness goal is: ${fitnessGoal}. The meal plan must adhere to the following dietary preferences: ${dietaryPrefs.length > 0 ? dietaryPrefs.join(', ') : 'None'}. Consider these medical conditions: ${medicalConditions || 'None'}. Exclude the following foods: ${exclusions || 'None'}. The plan should be healthy, balanced, and culturally appropriate. Provide breakfast, lunch, and dinner for each day with specific food items and portion sizes. Format the output as a daily list using Markdown, with each day's title being bold (e.g., **Day 1**).`;
-
-            try {
-                const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const textResponse = await fetch(textApiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-
-                if (!textResponse.ok) throw new Error(`API Error: ${textResponse.statusText}`);
-                const textResult = await textResponse.json();
-                
-                if (textResult.candidates && textResult.candidates.length > 0) {
-                    currentMealPlanText = textResult.candidates[0].content.parts[0].text;
-                    displayResults(currentMealPlanText);
-                } else {
-                    throw new Error("Failed to generate a meal plan.");
-                }
-
-                const imagePrompt = `A vibrant, appetizing, and professionally shot flat lay photograph of a healthy meal. The meal should be culturally representative of ${ethnicity} cuisine. Photorealistic, high detail, no text, no words, no letters.`;
-                const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-                const imageResponse = await fetch(imageApiUrl, {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ instances: [{ prompt: imagePrompt }], parameters: { "sampleCount": 1} })
-                });
-
-                if (imageResponse.ok) {
-                    const imageResult = await imageResponse.json();
-                    if (imageResult.predictions && imageResult.predictions.length > 0 && imageResult.predictions[0].bytesBase64Encoded) {
-                        mealPlanImage.src = `data:image/png;base64,${imageResult.predictions[0].bytesBase64Encoded}`;
-                    }
-                } else {
-                    console.error(`Image API Error: ${imageResponse.statusText}`);
-                }
-
-                loader.style.display = 'none';
-                resultContainer.style.display = 'block';
-
-            } catch (error) {
-                loader.style.display = 'none';
-                formContainer.style.display = 'block';
-                showMessage(error.message || "An unknown error occurred.");
-            }
-        });
-
-        groceryListButton.addEventListener('click', async () => {
-            if (!currentMealPlanText) {
-                showMessage("Please generate a meal plan first.");
-                return;
-            }
-
-            groceryListButton.disabled = true;
-            groceryListButton.innerHTML = `<div class="w-5 h-5 border-2 border-emerald-800 border-t-transparent rounded-full animate-spin"></div><span>Generating...</span>`;
-
-            const groceryPrompt = {
-                contents: [{ parts: [{ text: `Based on the following 7-day meal plan, generate a categorized grocery list. Combine all similar items. Meal Plan: ${currentMealPlanText}` }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            grocery_list: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        category: { type: "STRING" },
-                                        items: { type: "ARRAY", items: { type: "STRING" } }
-                                    },
-                                    required: ["category", "items"]
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-
-            try {
-                const groceryApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(groceryApiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(groceryPrompt)
-                });
-
-                if (!response.ok) throw new Error(`Grocery List API Error: ${response.statusText}`);
-                const result = await response.json();
-                const jsonText = result.candidates[0].content.parts[0].text;
-                groceryListData = JSON.parse(jsonText);
-
-                let html = '';
-                groceryListData.grocery_list.forEach(category => {
-                    html += `<div class="mb-4"><h4 class="font-bold text-gray-700">${category.category}</h4><ul class="mt-2 space-y-2">`;
-                    category.items.forEach((item, index) => { 
-                        html += `<li class="flex items-center"><input type="checkbox" id="item-${category.category}-${index}" class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"><label for="item-${category.category}-${index}" class="ml-3 text-gray-600">${item}</label></li>`;
-                    });
-                    html += `</ul></div>`;
-                });
-                
-                groceryListContainer.innerHTML = html;
-                groceryListButton.style.display = 'none';
-
-            } catch (error) {
-                showMessage(error.message || "Could not generate grocery list.");
-            } finally {
-                groceryListButton.disabled = false;
-                groceryListButton.innerHTML = `<i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Generate Grocery List</span>`;
-                lucide.createIcons();
-            }
-        });
-
-        refineButton.addEventListener('click', () => {
-            resultContainer.style.display = 'none';
-            formContainer.style.display = 'block';
-            groceryListButton.style.display = 'flex';
-            currentMealPlanText = "";
-            groceryListData = null;
-            nextStep(1);
-        });
-
-        // --- DISPLAY & FORMATTING ---
-        function displayResults(text) {
-            const parsedPlan = parseMarkdownForPdf(text);
-            const tabsContainer = document.getElementById('result-tabs');
-            const contentContainer = document.getElementById('tab-content');
-            tabsContainer.innerHTML = '';
-            contentContainer.innerHTML = '';
-
-            parsedPlan.days.forEach((day, index) => {
-                const dayId = day.title.replace(/\s+/g, '');
-                const isActive = index === 0;
-
-                const tabButton = document.createElement('a');
-                tabButton.href = '#';
-                tabButton.textContent = day.title;
-                tabButton.dataset.target = dayId;
-                
-                const activeClasses = ['active', 'text-emerald-600', 'border-emerald-600'];
-                const inactiveClasses = ['border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300'];
-                
-                tabButton.className = `result-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`;
-                (isActive ? activeClasses : inactiveClasses).forEach(c => tabButton.classList.add(c));
-                
-                tabButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    tabsContainer.querySelectorAll('a').forEach(t => {
-                        t.classList.remove(...activeClasses);
-                        t.classList.add(...inactiveClasses);
-                    });
-                    
-                    contentContainer.querySelectorAll('.tab-pane').forEach(p => {
-                        p.style.display = 'none';
-                    });
-                    
-                    tabButton.classList.add(...activeClasses);
-                    tabButton.classList.remove(...inactiveClasses);
-                    document.getElementById(tabButton.dataset.target).style.display = 'block';
-                });
-                
-                tabsContainer.appendChild(tabButton);
-
-                const contentPane = document.createElement('div');
-                contentPane.id = dayId;
-                contentPane.className = 'tab-pane';
-                contentPane.style.display = isActive ? 'block' : 'none';
-                let contentHtml = '<dl class="divide-y divide-gray-200">';
-                day.meals.forEach(meal => {
-                    const parts = meal.split(':');
-                    const mealType = parts[0];
-                    const mealDesc = parts.slice(1).join(':').trim();
-                    contentHtml += `<div class="py-4"><dt class="text-lg font-bold text-gray-900">${mealType}</dt><dd class="mt-2 text-base text-gray-600">${mealDesc}</dd></div>`;
-                });
-                contentHtml += '</dl>';
-                contentPane.innerHTML = contentHtml;
-                contentContainer.appendChild(contentPane);
-            });
-        }
-        
-        function parseMarkdownForPdf(text) {
-            const cleanText = (str) => str.replace(/\*/g, '').trim();
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            const parsed = {
-                intro: [],
-                days: [],
-                conclusion: []
-            };
-            let currentState = 'intro'; // states: intro, days, conclusion
-            let currentDay = null;
-
-            lines.forEach(line => {
-                if (line.startsWith('**Day')) {
-                    currentState = 'days';
-                    if (currentDay) parsed.days.push(currentDay);
-                    currentDay = { title: cleanText(line), meals: [] };
-                } else if (line.startsWith('*')) {
-                    const content = cleanText(line.substring(1));
-                    if (currentState === 'intro') {
-                        parsed.intro.push(content);
-                    } else if (currentDay) {
-                        currentDay.meals.push(content);
-                    }
-                } else {
-                    if (currentState === 'days' && line.length > 0) {
-                        currentState = 'conclusion';
-                    }
-                    if (currentState === 'intro') {
-                        parsed.intro.push(cleanText(line));
-                    } else {
-                        parsed.conclusion.push(cleanText(line));
-                    }
-                }
-            });
-
-            if (currentDay) parsed.days.push(currentDay);
-            return parsed;
-        }
-
-        // --- PDF GENERATION ---
-        pdfButton.addEventListener('click', async () => {
-            if (!currentMealPlanText) {
-                showMessage("Please generate a meal plan first.");
-                return;
-            }
-            showMessage("Preparing your PDF...", 'info');
-
-            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            const margin = 15;
-            const usableWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
-            let currentY = margin;
-
-            const addPageIfNeeded = (heightOfNextElement) => {
-                if (currentY + heightOfNextElement > pdf.internal.pageSize.getHeight() - margin) {
-                    pdf.addPage();
-                    currentY = margin;
-                }
-            };
-
-            const addText = (text, options) => {
-                const { size = 10, style = 'normal', color = '#333333', x = margin, isTitle = false, maxWidth = usableWidth } = options;
-                pdf.setFontSize(size);
-                pdf.setFont('helvetica', style);
-                pdf.setTextColor(color);
-                const lines = pdf.splitTextToSize(text, maxWidth);
-                const textHeight = lines.length * (size * 0.35);
-                addPageIfNeeded(textHeight + (isTitle ? 2 : 1));
-                pdf.text(lines, x, currentY);
-                currentY += textHeight + (isTitle ? 2 : 1);
-            };
-
-            addText('Perfect-Plate Meal Plan', { size: 22, style: 'bold', color: '#047857', isTitle: true });
-            currentY += 5;
-
-            const imgSrc = mealPlanImage.src;
-            if (imgSrc && !imgSrc.endsWith('about:blank')) {
-                try {
-                    const canvas = await html2canvas(mealPlanImage, { useCORS: true });
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgHeight = (canvas.height * usableWidth) / canvas.width;
-                    addPageIfNeeded(imgHeight + 10);
-                    pdf.addImage(imgData, 'PNG', margin, currentY, usableWidth, imgHeight);
-                    currentY += imgHeight + 10;
-                } catch (e) { console.error("Error adding image to PDF:", e); }
-            }
-
-            const parsedPlan = parseMarkdownForPdf(currentMealPlanText);
-            
-            if(parsedPlan.intro.length > 0) {
-                 addText('Important Notes', { size: 14, style: 'bold', color: '#047857', isTitle: true });
-                 parsedPlan.intro.forEach(note => addText(`• ${note}`, { size: 10, style: 'italic', color: '#555' }));
-                 currentY += 5;
-            }
-
-            parsedPlan.days.forEach(day => {
-                let blockHeight = 6;
-                day.meals.forEach(meal => {
-                    const parts = meal.split(/:(.*)/s);
-                    const mealDesc = parts[1] ? parts[1].trim() : '';
-                    blockHeight += pdf.splitTextToSize(mealDesc, usableWidth - 22).length * (10 * 0.35) + 3;
-                });
-                
-                addPageIfNeeded(blockHeight);
-                addText(day.title, { size: 14, style: 'bold', color: '#047857', isTitle: true });
-                day.meals.forEach(meal => {
-                    const parts = meal.split(/:(.*)/s);
-                    const mealType = parts[0] + ':';
-                    const mealDesc = parts[1] ? parts[1].trim() : '';
-                    
-                    const descLines = pdf.splitTextToSize(mealDesc, usableWidth - 22);
-                    const itemHeight = descLines.length * (10 * 0.35) + 3;
-
-                    addPageIfNeeded(itemHeight);
-                    
-                    pdf.setFontSize(10);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text(mealType, margin + 2, currentY);
-                    
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(descLines, margin + 22, currentY);
-                    currentY += itemHeight;
-                });
-                currentY += 5;
-            });
-            
-            if(parsedPlan.conclusion.length > 0) {
-                 addText('Additional Considerations', { size: 14, style: 'bold', color: '#047857', isTitle: true });
-                 parsedPlan.conclusion.forEach(note => addText(`• ${note}`, { size: 10, style: 'italic', color: '#555' }));
-                 currentY += 5;
-            }
-
-            if (groceryListData && groceryListData.grocery_list) {
-                currentY += 5;
-                addPageIfNeeded(15);
-                addText('Your Weekly Grocery List', { size: 16, style: 'bold', color: '#047857', isTitle: true });
-
-                groceryListData.grocery_list.forEach(category => {
-                    let blockHeight = 6;
-                    category.items.forEach(item => { blockHeight += pdf.splitTextToSize(item, usableWidth - 5).length * (10 * 0.35) + 2; });
-
-                    addPageIfNeeded(blockHeight);
-                    addText(category.category, { size: 12, style: 'bold', color: '#047857', isTitle: true });
-                    category.items.forEach(item => addText(`• ${item}`, { size: 10 }));
-                    currentY += 5;
-                });
-            }
-
-            pdf.save('Perfect-Plate-Plan.pdf');
-        });
-
-        function showMessage(message) {
-            messageText.textContent = message;
-            messageBox.classList.remove('hidden');
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 4000);
-        }
-
-    </script>
+    <!-- Custom JavaScript -->
+    <script src="assets/js/main.js"></script>
 </body>
 </html>

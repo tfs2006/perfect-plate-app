@@ -1,0 +1,74 @@
+<!-- pages/contact.html -->
+<div class="fade-in">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">Get In Touch</h1>
+            <p class="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">Have a question, comment, or suggestion? We'd love to hear from you. Please use the form below to reach our team.</p>
+        </header>
+
+        <!-- Contact Form Section -->
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-lg border border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Form -->
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h2>
+                    <!-- This form now points to FormSubmit to send emails -->
+                    <form action="https://formsubmit.co/advaluecirclecontactform@4ourmedia.com" method="POST" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-slate-700">Full Name</label>
+                            <div class="mt-1">
+                                <input type="text" name="name" id="name" autocomplete="name" required class="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700">Email Address</label>
+                            <div class="mt-1">
+                                <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-slate-700">Message</label>
+                            <div class="mt-1">
+                                <textarea id="message" name="message" rows="4" required class="block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="bg-indigo-50 p-8 rounded-2xl border border-indigo-100">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">Our Information</h3>
+                    <div class="space-y-4 text-slate-600">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-indigo-600 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="font-semibold text-slate-800">Email</h4>
+                                <p>advaluecirclecontactform@4ourmedia.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="message-square" class="w-5 h-5 text-indigo-600 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="font-semibold text-slate-800">General Inquiries</h4>
+                                <p>For general questions or feedback about our content, please use the contact form.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="briefcase" class="w-5 h-5 text-indigo-600 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="font-semibold text-slate-800">Partnerships</h4>
+                                <p>For partnership or media inquiries, please reach out to us via email.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

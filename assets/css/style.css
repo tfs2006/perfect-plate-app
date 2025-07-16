@@ -1,0 +1,56 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc; /* slate-50 */
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Style for the active nav link */
+.nav-link-active {
+    color: #4f46e5; /* indigo-600 */
+    font-weight: 600;
+}
+
+/* Added styles for prose from the original prototype */
+.prose {
+    color: #334155; /* slate-700 */
+}
+
+.prose h1 {
+    color: #1e293b; /* slate-800 */
+}
+
+.prose h2 {
+    color: #1e293b; /* slate-800 */
+}
+
+.prose h3 {
+    color: #1e293b; /* slate-800 */
+}
+
+.prose a {
+    color: #4f46e5; /* indigo-600 */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.prose a:hover {
+    text-decoration: underline;
+}
+
+.prose strong {
+    color: #1e293b; /* slate-800 */
+}
+
+.prose .lead {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.6;
+    color: #475569; /* slate-600 */
+}
