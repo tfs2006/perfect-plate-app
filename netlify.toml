@@ -7,20 +7,9 @@
   # This tells Netlify where your main website files are.
   publish = "."
 
-# This section adjusts the security headers to fix the PDF error.
-[[headers]]
-  # Apply these headers to all pages on the site.
-  for = "/*"
-  [headers.values]
-    # This is the Content Security Policy (CSP) header.
-    # We are adding 'unsafe-eval' to allow the PDF library to work correctly.
-    Content-Security-Policy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com;"
-
 # This is the crucial redirect rule that makes the API proxy work.
+# It tells Netlify to route any request starting with /api/ to your functions.
 [[redirects]]
-  # The path the browser will call.
   from = "/api/*"
-  # The serverless function to redirect to.
   to = "/.netlify/functions/:splat"
-  # The HTTP status code for the redirect. 200 means it's a successful rewrite.
   status = 200

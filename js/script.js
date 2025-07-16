@@ -127,14 +127,13 @@ function showPaywall() {
 
 // --- SECURE API CALLS (to your serverless functions) ---
 async function secureApiCall(endpoint, body) {
-    // This is the correct, robust path for Netlify functions
-    const functionUrl = `/.netlify/functions/${endpoint}`;
+    // **THIS IS THE FIX:** We now call the public /api/ path,
+    // which Netlify will correctly redirect to our secure function.
+    const functionUrl = `/api/${endpoint}`;
     
     const response = await fetch(functionUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // The body of our request to the serverless function
-        // now contains the original body intended for the Google API.
         body: JSON.stringify(body) 
     });
     if (!response.ok) {
