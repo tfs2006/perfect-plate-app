@@ -1,0 +1,10 @@
+# Netlify configuration file to adjust security headers
+
+[[headers]]
+  # Apply these headers to all pages on the site
+  for = "/*"
+  [headers.values]
+    # This is the Content Security Policy header.
+    # We are adding 'unsafe-eval' to the script-src directive.
+    # This tells the browser to allow the functions needed by the PDF library.
+    Content-Security-Policy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://unpkg.com;"
