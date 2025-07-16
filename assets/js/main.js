@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Simple Client-Side Router ---
     const mainContent = document.getElementById('main-content');
-    const navLinks = document.querySelectorAll('.router-link');
     const headerNavLinks = document.querySelectorAll('header .router-link');
 
     async function loadContent(route) {
@@ -37,6 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             addClickListenersToRouterLinks();
 
+            // --- Google Analytics Page View Tracking for SPA ---
+            // Get the page title from the new content's h1 tag
+            const pageTitle = mainContent.querySelector('h1')?.innerText || 'Page';
+            const pagePath = `/${window.location.hash}`;
+
+            // Check if gtag function exists before calling it
+            if (typeof gtag === 'function') {
+                gtag('event', 'page_view', {
+                    page_title: pageTitle,
+                    page_location: window.location.href,
+                    page_path: pagePath,
+                });
+                console.log(`GA Event Sent: page_view for ${pagePath}`);
+            }
+
+
         } catch (error) {
             console.error('Error loading page:', error);
             mainContent.innerHTML = `<div class="text-center text-red-500">Failed to load content. Please try again.</div>`;
@@ -56,19 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle main navigation links
         headerNavLinks.forEach(link => {
             const linkRoute = link.getAttribute('href');
-            // Special case for pillar page link
-            if (linkRoute === '#pillar' && currentRoute === '#pillar') {
+            if (linkRoute === currentRoute) {
                  link.classList.add('nav-link-active');
-            } else if (linkRoute === currentRoute) {
-                 link.classList.add('nav-link-active');
-            }
-            else {
+            } else {
                 link.classList.remove('nav-link-active');
             }
         });
 
         // Close mobile menu on navigation
-        if (!mobileMenu.classList.contains('hidden')) {
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
             mobileMenu.classList.add('hidden');
         }
     }
